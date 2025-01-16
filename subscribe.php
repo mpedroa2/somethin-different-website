@@ -63,15 +63,21 @@ try {
         error_log('Member not found, attempting to add...');
         error_log('Adding member with email: ' . $data['email']);
         
-        $result = $mailchimp->lists->addListMember($list_id, [
+        // Format the member data according to Mailchimp's API requirements
+        $member_data = [
             'email_address' => $data['email'],
             'status' => 'subscribed',
             'merge_fields' => [
-                'FNAME' => $data['name']
-            ]
-        ]);
+                'FNAME' => $data['name'] ?? ''  // Make name optional
+            ],
+            'tags' => ['Website Signup']  // Add a tag to track source
+        ];
+
+        error_log('Sending member data: ' . json_encode($member_data));
         
-        error_log('Member added successfully');
+        $result = $mailchimp->lists->addListMember($list_id, $member_data);
+        error_log('API Response: ' . json_encode($result));
+        
         echo json_encode(['success' => true, 'message' => 'Thanks for subscribing!']);
     }
 } catch (\Exception $e) {
