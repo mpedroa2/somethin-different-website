@@ -26,10 +26,7 @@ try {
 
     // Replace the multiple header calls with a single one using an array
     $allowed_origins = [
-        'https://somethindifferent.co',
         'https://www.somethindifferent.co',
-        'http://somethindifferent.co',
-        'http://www.somethindifferent.co',
         'https://somethin-different-dd8aefc58ac8.herokuapp.com'
     ];
 
