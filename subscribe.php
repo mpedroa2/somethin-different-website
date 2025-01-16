@@ -3,8 +3,8 @@
 ob_start();
 
 // Prevent PHP errors from being displayed
-error_reporting(0);
-ini_set('display_errors', 0);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 require_once 'vendor/autoload.php';
 
@@ -21,6 +21,8 @@ header('Access-Control-Allow-Headers: Content-Type');
 error_log('Starting subscription process');
 error_log('API Key exists: ' . (getenv('MAILCHIMP_API_KEY') ? 'Yes' : 'No'));
 error_log('List ID exists: ' . (getenv('MAILCHIMP_LIST_ID') ? 'Yes' : 'No'));
+error_log('API Key value: ' . substr(getenv('MAILCHIMP_API_KEY'), 0, 6) . '...');
+error_log('List ID value: ' . getenv('MAILCHIMP_LIST_ID'));
 
 $data = json_decode(file_get_contents('php://input'), true);
 error_log('Received data: ' . json_encode($data));
@@ -41,6 +43,8 @@ try {
     }
 
     $mailchimp = new \MailchimpMarketing\ApiClient();
+    error_log('Setting up Mailchimp client...');
+    
     $mailchimp->setConfig([
         'apiKey' => getenv('MAILCHIMP_API_KEY'),
         'server' => 'us8'
@@ -50,11 +54,15 @@ try {
     $subscriber_hash = md5(strtolower($data['email']));
     
     try {
+        error_log('Checking if member exists...');
         $member = $mailchimp->lists->getListMember($list_id, $subscriber_hash);
+        error_log('Member exists');
         echo json_encode(['success' => true, 'message' => 'You\'re already subscribed!']);
         exit;
     } catch (\Exception $e) {
-        error_log('Adding new member. Error was: ' . $e->getMessage());
+        error_log('Member not found, attempting to add...');
+        error_log('Adding member with email: ' . $data['email']);
+        
         $result = $mailchimp->lists->addListMember($list_id, [
             'email_address' => $data['email'],
             'status' => 'subscribed',
@@ -63,13 +71,18 @@ try {
             ]
         ]);
         
+        error_log('Member added successfully');
         echo json_encode(['success' => true, 'message' => 'Thanks for subscribing!']);
     }
 } catch (\Exception $e) {
     $error_message = $e->getMessage();
     error_log('Detailed error: ' . $error_message);
+    error_log('Full exception: ' . print_r($e, true));
     http_response_code(500);
-    echo json_encode(['error' => 'Subscription failed. Please try again.', 'details' => $error_message]);
+    echo json_encode([
+        'error' => 'Subscription failed. Please try again.',
+        'details' => $error_message
+    ]);
 }
 
 // Flush output buffer
