@@ -1,4 +1,10 @@
 <?php
+// Move headers to top
+header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
+header('Content-Security-Policy: default-src https: \'self\'; img-src https: data: \'self\'; style-src https: \'self\' \'unsafe-inline\';');
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: SAMEORIGIN');
+
 // Prevent any output before headers
 ob_start();
 
@@ -41,13 +47,6 @@ try {
     // Add these headers for better mobile support
     header('Vary: User-Agent');
     header('Cache-Control: no-cache');
-
-    // Add security headers for desktop browsers
-    header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
-    header('Content-Security-Policy: default-src https: \'self\'; img-src https: data: \'self\'; style-src https: \'self\' \'unsafe-inline\';');
-    header('X-Content-Type-Options: nosniff');
-    header('X-Frame-Options: SAMEORIGIN');
-    header('Content-Security-Policy: upgrade-insecure-requests');
 
     // Force HTTPS
     if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {
