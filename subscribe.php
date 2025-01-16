@@ -66,11 +66,10 @@ try {
         // Format the member data according to Mailchimp's API requirements
         $member_data = [
             'email_address' => $data['email'],
-            'status' => 'subscribed',
+            'status' => 'pending',
             'merge_fields' => [
-                'FNAME' => $data['name'] ?? ''  // Make name optional
-            ],
-            'tags' => ['Website Signup']  // Add a tag to track source
+                'FNAME' => isset($data['name']) ? $data['name'] : ''
+            ]
         ];
 
         error_log('Sending member data: ' . json_encode($member_data));
@@ -78,7 +77,10 @@ try {
         $result = $mailchimp->lists->addListMember($list_id, $member_data);
         error_log('API Response: ' . json_encode($result));
         
-        echo json_encode(['success' => true, 'message' => 'Thanks for subscribing!']);
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Thanks! Please check your email to confirm your subscription.'
+        ]);
     }
 } catch (\Exception $e) {
     $error_message = $e->getMessage();
