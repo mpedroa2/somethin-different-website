@@ -25,20 +25,20 @@ try {
         exit();
     }
 
-    // Verify environment variables
+    // Get and validate input
+    $raw_input = file_get_contents('php://input');
+    $data = json_decode($raw_input, true);
+
+    // Validate email format
+    if (!$data || !isset($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+        throw new Exception('Please enter a valid email address');
+    }
+
     $api_key = getenv('MAILCHIMP_API_KEY');
     $list_id = getenv('MAILCHIMP_LIST_ID');
 
     if (!$api_key || !$list_id) {
         throw new Exception('Missing required configuration');
-    }
-
-    // Get and validate input
-    $raw_input = file_get_contents('php://input');
-    $data = json_decode($raw_input, true);
-
-    if (!$data || !isset($data['email'])) {
-        throw new Exception('Invalid input data');
     }
 
     // Initialize Mailchimp
@@ -48,22 +48,38 @@ try {
         'server' => 'us8'
     ]);
 
-    // Test connection
-    $ping = $mailchimp->ping->get();
-    error_log('Mailchimp ping response: ' . json_encode($ping));
+    // Test connection first
+    try {
+        $ping = $mailchimp->ping->get();
+        error_log('Mailchimp connection successful: ' . json_encode($ping));
+    } catch (Exception $e) {
+        throw new Exception('Failed to connect to Mailchimp');
+    }
+
+    // Check if subscriber already exists
+    try {
+        $subscriber_hash = md5(strtolower($data['email']));
+        $existing_member = $mailchimp->lists->getListMember($list_id, $subscriber_hash);
+        throw new Exception('This email is already subscribed');
+    } catch (\GuzzleHttp\Exception\ClientException $e) {
+        if ($e->getResponse()->getStatusCode() !== 404) {
+            throw $e;
+        }
+        // 404 means member not found, continue with subscription
+    }
 
     // Prepare subscriber data
     $subscriber_data = [
         'email_address' => $data['email'],
-        'status' => 'pending'
+        'status' => 'pending',
+        'merge_fields' => [
+            'FNAME' => isset($data['name']) ? $data['name'] : ''
+        ]
     ];
-
-    if (!empty($data['name'])) {
-        $subscriber_data['merge_fields'] = ['FNAME' => $data['name']];
-    }
 
     // Add subscriber
     $result = $mailchimp->lists->addListMember($list_id, $subscriber_data);
+    error_log('Subscriber added successfully: ' . json_encode($result));
     
     echo json_encode([
         'success' => true,
@@ -75,8 +91,8 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'error' => 'Subscription failed. Please try again.',
-        'details' => $e->getMessage()
+        'error' => $e->getMessage(),
+        'details' => 'Please try again or contact support if the problem persists.'
     ]);
 }
 
