@@ -1,34 +1,27 @@
 <?php
 // Prevent PHP errors from being output
-error_reporting(0);
-ini_set('display_errors', 0);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 require_once 'vendor/autoload.php';
 
-// Ensure clean output buffer
-ob_clean();
+// Log environment variables
+error_log('MAILCHIMP_API_KEY: ' . (getenv('MAILCHIMP_API_KEY') ? 'exists' : 'missing'));
+error_log('MAILCHIMP_LIST_ID: ' . (getenv('MAILCHIMP_LIST_ID') ? 'exists' : 'missing'));
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Log errors to file instead of output
-error_log('Received request: ' . print_r($_POST, true));
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['error' => 'Method not allowed']);
-    exit;
-}
-
 $data = json_decode(file_get_contents('php://input'), true);
+error_log('Received data: ' . print_r($data, true));
 
 try {
+    if (!getenv('MAILCHIMP_API_KEY') || !getenv('MAILCHIMP_LIST_ID')) {
+        throw new Exception('Mailchimp configuration missing');
+    }
+
     $mailchimp = new \MailchimpMarketing\ApiClient();
     $mailchimp->setConfig([
         'apiKey' => getenv('MAILCHIMP_API_KEY'),
@@ -44,6 +37,7 @@ try {
         echo json_encode(['success' => true, 'message' => 'You\'re already subscribed!']);
         exit;
     } catch (\Exception $e) {
+        error_log('Adding new member: ' . $data['email']);
         $result = $mailchimp->lists->addListMember($list_id, [
             'email_address' => $data['email'],
             'status' => 'subscribed',
@@ -56,7 +50,7 @@ try {
         echo json_encode(['success' => true, 'message' => 'Thanks for subscribing!']);
     }
 } catch (\Exception $e) {
-    error_log('Mailchimp API error: ' . $e->getMessage());
+    error_log('Detailed error: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode(['error' => 'Subscription failed. Please try again.']);
 } 
