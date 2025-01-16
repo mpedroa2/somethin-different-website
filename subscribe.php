@@ -17,79 +17,99 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Add detailed logging
-error_log('Starting subscription process');
-error_log('API Key exists: ' . (getenv('MAILCHIMP_API_KEY') ? 'Yes' : 'No'));
-error_log('List ID exists: ' . (getenv('MAILCHIMP_LIST_ID') ? 'Yes' : 'No'));
-error_log('API Key value: ' . substr(getenv('MAILCHIMP_API_KEY'), 0, 6) . '...');
-error_log('List ID value: ' . getenv('MAILCHIMP_LIST_ID'));
+// Diagnostic logging function
+function logDebug($message, $data = null) {
+    $log = date('Y-m-d H:i:s') . " - $message";
+    if ($data) {
+        $log .= " - Data: " . json_encode($data);
+    }
+    error_log($log);
+}
 
-$data = json_decode(file_get_contents('php://input'), true);
-error_log('Received data: ' . json_encode($data));
+logDebug('Starting subscription process');
 
-// Validate email
-if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+// 1. First verify we can read the environment variables
+$api_key = getenv('MAILCHIMP_API_KEY');
+$list_id = getenv('MAILCHIMP_LIST_ID');
+
+logDebug('Configuration', [
+    'api_key_exists' => !empty($api_key),
+    'list_id_exists' => !empty($list_id),
+    'api_key_preview' => $api_key ? substr($api_key, 0, 6) . '...' : 'missing',
+    'list_id' => $list_id
+]);
+
+// 2. Get and validate input
+$raw_input = file_get_contents('php://input');
+logDebug('Raw input received', $raw_input);
+
+$data = json_decode($raw_input, true);
+if (!$data) {
+    logDebug('Failed to parse JSON input');
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid JSON input']);
+    exit;
+}
+
+logDebug('Parsed input data', $data);
+
+// 3. Validate email
+if (empty($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+    logDebug('Invalid email address', $data['email']);
     http_response_code(400);
     echo json_encode(['error' => 'Please enter a valid email address']);
     exit;
 }
 
 try {
-    if (!getenv('MAILCHIMP_API_KEY')) {
-        throw new Exception('Mailchimp API key is missing');
-    }
-    if (!getenv('MAILCHIMP_LIST_ID')) {
-        throw new Exception('Mailchimp List ID is missing');
-    }
-
+    // 4. Test Mailchimp connection
     $mailchimp = new \MailchimpMarketing\ApiClient();
-    error_log('Setting up Mailchimp client...');
-    
     $mailchimp->setConfig([
-        'apiKey' => getenv('MAILCHIMP_API_KEY'),
+        'apiKey' => $api_key,
         'server' => 'us8'
     ]);
 
-    $list_id = getenv('MAILCHIMP_LIST_ID');
-    $subscriber_hash = md5(strtolower($data['email']));
-    
+    // 5. Try a simple ping first
     try {
-        error_log('Checking if member exists...');
-        $member = $mailchimp->lists->getListMember($list_id, $subscriber_hash);
-        error_log('Member exists');
-        echo json_encode(['success' => true, 'message' => 'You\'re already subscribed!']);
-        exit;
+        logDebug('Testing Mailchimp connection');
+        $ping_result = $mailchimp->ping->get();
+        logDebug('Ping response', $ping_result);
     } catch (\Exception $e) {
-        error_log('Member not found, attempting to add...');
-        error_log('Adding member with email: ' . $data['email']);
-        
-        // Format the member data according to Mailchimp's API requirements
-        $member_data = [
-            'email_address' => $data['email'],
-            'status' => 'pending',
-            'merge_fields' => [
-                'FNAME' => isset($data['name']) ? $data['name'] : ''
-            ]
-        ];
-
-        error_log('Sending member data: ' . json_encode($member_data));
-        
-        $result = $mailchimp->lists->addListMember($list_id, $member_data);
-        error_log('API Response: ' . json_encode($result));
-        
-        echo json_encode([
-            'success' => true, 
-            'message' => 'Thanks! Please check your email to confirm your subscription.'
-        ]);
+        logDebug('Ping failed', $e->getMessage());
+        throw new Exception('Failed to connect to Mailchimp: ' . $e->getMessage());
     }
+
+    // 6. Prepare subscriber data
+    $subscriber_data = [
+        'email_address' => $data['email'],
+        'status' => 'pending'
+    ];
+
+    if (!empty($data['name'])) {
+        $subscriber_data['merge_fields'] = ['FNAME' => $data['name']];
+    }
+
+    logDebug('Attempting to add subscriber', $subscriber_data);
+
+    // 7. Add the subscriber
+    $result = $mailchimp->lists->addListMember($list_id, $subscriber_data);
+    logDebug('Mailchimp API response', $result);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'Thanks! Please check your email to confirm your subscription.'
+    ]);
+
 } catch (\Exception $e) {
-    $error_message = $e->getMessage();
-    error_log('Detailed error: ' . $error_message);
-    error_log('Full exception: ' . print_r($e, true));
+    logDebug('Error occurred', [
+        'message' => $e->getMessage(),
+        'trace' => $e->getTraceAsString()
+    ]);
+    
     http_response_code(500);
     echo json_encode([
         'error' => 'Subscription failed. Please try again.',
-        'details' => $error_message
+        'details' => $e->getMessage()
     ]);
 }
 
