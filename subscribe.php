@@ -12,6 +12,14 @@ require_once 'vendor/autoload.php';
 // Clear any previous output
 ob_clean();
 
+function logError($message, $data = null) {
+    $log = "[" . date('Y-m-d H:i:s') . "] $message";
+    if ($data) {
+        $log .= " Data: " . json_encode($data);
+    }
+    error_log($log);
+}
+
 try {
     // Set JSON headers
     header('Content-Type: application/json');
@@ -25,17 +33,34 @@ try {
         exit();
     }
 
-    // Get and validate input
-    $raw_input = file_get_contents('php://input');
-    $data = json_decode($raw_input, true);
+    // Log request
+    logError('Received request', [
+        'method' => $_SERVER['REQUEST_METHOD'],
+        'content_type' => $_SERVER['CONTENT_TYPE'] ?? 'not set'
+    ]);
 
-    // Validate email format
+    // Get input
+    $raw_input = file_get_contents('php://input');
+    logError('Raw input', $raw_input);
+
+    $data = json_decode($raw_input, true);
+    logError('Parsed data', $data);
+
+    // Validate email
     if (!$data || !isset($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
         throw new Exception('Please enter a valid email address');
     }
 
+    // Get config
     $api_key = getenv('MAILCHIMP_API_KEY');
     $list_id = getenv('MAILCHIMP_LIST_ID');
+
+    logError('Config check', [
+        'api_key_exists' => !empty($api_key),
+        'list_id_exists' => !empty($list_id),
+        'api_key_prefix' => $api_key ? substr($api_key, 0, 6) . '...' : 'missing',
+        'list_id' => $list_id
+    ]);
 
     if (!$api_key || !$list_id) {
         throw new Exception('Missing required configuration');
@@ -48,24 +73,14 @@ try {
         'server' => 'us8'
     ]);
 
-    // Test connection first
+    // Test connection
     try {
+        logError('Testing Mailchimp connection');
         $ping = $mailchimp->ping->get();
-        error_log('Mailchimp connection successful: ' . json_encode($ping));
+        logError('Ping successful', $ping);
     } catch (Exception $e) {
+        logError('Ping failed', $e->getMessage());
         throw new Exception('Failed to connect to Mailchimp');
-    }
-
-    // Check if subscriber already exists
-    try {
-        $subscriber_hash = md5(strtolower($data['email']));
-        $existing_member = $mailchimp->lists->getListMember($list_id, $subscriber_hash);
-        throw new Exception('This email is already subscribed');
-    } catch (\GuzzleHttp\Exception\ClientException $e) {
-        if ($e->getResponse()->getStatusCode() !== 404) {
-            throw $e;
-        }
-        // 404 means member not found, continue with subscription
     }
 
     // Prepare subscriber data
@@ -77,9 +92,11 @@ try {
         ]
     ];
 
+    logError('Attempting to add subscriber', $subscriber_data);
+
     // Add subscriber
     $result = $mailchimp->lists->addListMember($list_id, $subscriber_data);
-    error_log('Subscriber added successfully: ' . json_encode($result));
+    logError('Subscription successful', $result);
     
     echo json_encode([
         'success' => true,
@@ -87,7 +104,11 @@ try {
     ]);
 
 } catch (Exception $e) {
-    error_log('Subscription error: ' . $e->getMessage());
+    logError('Error occurred', [
+        'message' => $e->getMessage(),
+        'trace' => $e->getTraceAsString()
+    ]);
+    
     http_response_code(500);
     echo json_encode([
         'success' => false,
