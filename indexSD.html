@@ -164,7 +164,16 @@
         e.preventDefault();
         const formStatus = document.getElementById('formStatus');
         const formData = new FormData(e.target);
+        const email = formData.get('email');
         
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          formStatus.textContent = 'Please enter a valid email address';
+          formStatus.className = 'form-status error';
+          return;
+        }
+
         try {
           console.log('Submitting form...');
           const response = await fetch('/subscribe.php', {
@@ -189,7 +198,7 @@
             throw new Error(data.error || 'Subscription failed');
           }
         } catch (error) {
-          console.error('Error:', error);
+          console.error('Error details:', error);
           formStatus.textContent = 'Something went wrong. Please try again.';
           formStatus.className = 'form-status error';
         }
