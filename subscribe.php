@@ -1,15 +1,19 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Prevent PHP errors from being output
+error_reporting(0);
+ini_set('display_errors', 0);
 
 require_once 'vendor/autoload.php';
+
+// Ensure clean output buffer
+ob_clean();
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Add logging
+// Log errors to file instead of output
 error_log('Received request: ' . print_r($_POST, true));
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -24,8 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-error_log('Received data: ' . print_r($data, true));
-
 try {
     $mailchimp = new \MailchimpMarketing\ApiClient();
     $mailchimp->setConfig([
@@ -37,14 +39,11 @@ try {
     $subscriber_hash = md5(strtolower($data['email']));
     
     try {
-        // Try to get the member first
         $member = $mailchimp->lists->getListMember($list_id, $subscriber_hash);
-        // If we get here, the member exists
         http_response_code(200);
         echo json_encode(['success' => true, 'message' => 'You\'re already subscribed!']);
         exit;
     } catch (\Exception $e) {
-        // Member doesn't exist, proceed with adding them
         $result = $mailchimp->lists->addListMember($list_id, [
             'email_address' => $data['email'],
             'status' => 'subscribed',
@@ -52,14 +51,12 @@ try {
                 'FNAME' => $data['name']
             ]
         ]);
-
-        error_log('API call successful: ' . print_r($result, true));
         
         http_response_code(200);
         echo json_encode(['success' => true, 'message' => 'Thanks for subscribing!']);
     }
 } catch (\Exception $e) {
-    error_log('Error in Mailchimp API call: ' . $e->getMessage());
+    error_log('Mailchimp API error: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => $e->getMessage()]);
+    echo json_encode(['error' => 'Subscription failed. Please try again.']);
 } 
