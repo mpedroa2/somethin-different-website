@@ -1,0 +1,53 @@
+/* Mobile styles (for screens smaller than 768px) */
+@media screen and (max-width: 767px) {
+    /* Logo adjustments */
+    .logo-top {
+        font-size: 2.5rem;
+    }
+    
+    .logo-bottom {
+        font-size: 2rem;
+    }
+
+    /* Navigation adjustments */
+    .search-container {
+        display: none; /* Hide search on mobile */
+    }
+
+    /* Slideshow adjustments */
+    .slideshow-container {
+        height: 300px;
+        margin: 2rem auto;
+    }
+
+    /* Form adjustments */
+    .connect-form {
+        padding: 0 1rem;
+    }
+
+    /* Footer adjustments */
+    .footer-icons {
+        gap: 1rem;
+    }
+
+    /* Content spacing */
+    .welcome {
+        margin-bottom: 3rem;
+        padding: 0 1rem;
+    }
+
+    .stay-connected {
+        padding: 0 1rem;
+    }
+}
+
+/* Small phones (iPhone SE, etc) */
+@media screen and (max-width: 375px) {
+    .logo-top {
+        font-size: 2rem;
+    }
+    
+    .logo-bottom {
+        font-size: 1.8rem;
+    }
+} 

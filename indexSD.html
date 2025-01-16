@@ -6,8 +6,9 @@
     <meta name="description" content="Somethin' Different - The sounds of an update to the human consciousness">
     <link rel="stylesheet" href="css/SDmicro.css">
     <link rel="stylesheet" href="css/SDresponsive.css">
+    <link rel="stylesheet" href="css/mobile.css">
     <link rel="icon" href="pics/SD LOGO.png" type="image/png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   </head>
   <body class="dark-theme">
     <header>
@@ -162,6 +163,13 @@
 
       document.getElementById('connect-form').addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        // Disable form while submitting
+        const submitButton = e.target.querySelector('button');
+        const originalText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Subscribing...';
+        
         const formStatus = document.getElementById('formStatus');
         const formData = new FormData(e.target);
         
@@ -203,8 +211,37 @@
             console.error('Error details:', error);
             formStatus.textContent = 'Connection error. Please try again.';
             formStatus.className = 'form-status error';
+        } finally {
+            // Re-enable form
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
         }
       });
+
+      // Add touch support for slideshow
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      document.querySelector('.slideshow').addEventListener('touchstart', e => {
+          touchStartX = e.changedTouches[0].screenX;
+      });
+
+      document.querySelector('.slideshow').addEventListener('touchend', e => {
+          touchEndX = e.changedTouches[0].screenX;
+          handleSwipe();
+      });
+
+      function handleSwipe() {
+          const swipeThreshold = 50;
+          if (touchEndX < touchStartX - swipeThreshold) {
+              // Swipe left - next slide
+              nextSlide();
+          } else if (touchEndX > touchStartX + swipeThreshold) {
+              // Swipe right - previous slide
+              currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+              showSlide(currentSlide);
+          }
+      }
     </script>
   </body>
 </html>
