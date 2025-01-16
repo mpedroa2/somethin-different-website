@@ -43,9 +43,17 @@ try {
     header('Cache-Control: no-cache');
 
     // Add security headers for desktop browsers
-    header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+    header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
     header('X-Content-Type-Options: nosniff');
     header('X-Frame-Options: SAMEORIGIN');
+    header('Content-Security-Policy: upgrade-insecure-requests');
+
+    // Force HTTPS
+    if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {
+        header('HTTP/1.1 301 Moved Permanently');
+        header('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+        exit();
+    }
 
     // Handle preflight request
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -166,5 +174,15 @@ try {
         'error' => $e->getMessage()
     ]);
 }
+
+// Mobile optimization headers
+header('Vary: User-Agent');
+header('Cache-Control: no-cache');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+// Add touch event handling
+header('Touch-Action: manipulation');
 
 ob_end_flush(); 

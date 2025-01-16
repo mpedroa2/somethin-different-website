@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="css/mobile.css">
     <link rel="icon" href="pics/SD LOGO.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
   </head>
   <body class="dark-theme">
     <header>
@@ -247,9 +250,9 @@
           }
       }
 
-      // Update redirect logic to handle all cases
+      // Update redirect logic to force HTTPS
       if (window.location.protocol !== 'https:' || window.location.hostname === 'somethindifferent.co') {
-          window.location.href = 'https://www.somethindifferent.co' + window.location.pathname;
+          window.location.replace('https://www.somethindifferent.co' + window.location.pathname);
       }
     </script>
   </body>
