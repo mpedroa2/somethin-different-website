@@ -28,6 +28,8 @@ try {
     $allowed_origins = [
         'https://somethindifferent.co',
         'https://www.somethindifferent.co',
+        'http://somethindifferent.co',
+        'http://www.somethindifferent.co',
         'https://somethin-different-dd8aefc58ac8.herokuapp.com'
     ];
 

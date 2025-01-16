@@ -2,5 +2,10 @@
     "require": {
         "php": "^8.0",
         "mailchimp/marketing": "^3.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 } 
