@@ -46,8 +46,13 @@ try {
     $data = json_decode($raw_input, true);
     logError('Parsed data', $data);
 
-    // Validate email
-    if (!$data || !isset($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+    // Enhanced email validation
+    if (!$data || !isset($data['email'])) {
+        throw new Exception('Email is required');
+    }
+
+    $email = filter_var(trim($data['email']), FILTER_VALIDATE_EMAIL);
+    if (!$email) {
         throw new Exception('Please enter a valid email address');
     }
 
@@ -83,25 +88,51 @@ try {
         throw new Exception('Failed to connect to Mailchimp');
     }
 
-    // Prepare subscriber data
+    // Prepare subscriber data with validated email
     $subscriber_data = [
-        'email_address' => $data['email'],
-        'status' => 'pending',
+        'email_address' => $email,
+        'status' => 'subscribed',  // Changed from 'pending' to 'subscribed'
         'merge_fields' => [
-            'FNAME' => isset($data['name']) ? $data['name'] : ''
+            'FNAME' => isset($data['name']) ? trim($data['name']) : ''
         ]
     ];
 
     logError('Attempting to add subscriber', $subscriber_data);
 
-    // Add subscriber
-    $result = $mailchimp->lists->addListMember($list_id, $subscriber_data);
-    logError('Subscription successful', $result);
-    
-    echo json_encode([
-        'success' => true,
-        'message' => 'Thanks! Please check your email to confirm your subscription.'
-    ]);
+    try {
+        // Check if subscriber already exists
+        $subscriber_hash = md5(strtolower($email));
+        try {
+            $existing = $mailchimp->lists->getListMember($list_id, $subscriber_hash);
+            throw new Exception('This email is already subscribed');
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            if ($e->getResponse()->getStatusCode() !== 404) {
+                throw $e;
+            }
+        }
+
+        // Add new subscriber
+        $result = $mailchimp->lists->addListMember($list_id, $subscriber_data);
+        logError('Subscription successful', $result);
+        
+        echo json_encode([
+            'success' => true,
+            'message' => 'Thanks for subscribing! Welcome to Somethin\' Different.'
+        ]);
+
+    } catch (\GuzzleHttp\Exception\ClientException $e) {
+        $response = $e->getResponse();
+        $body = json_decode($response->getBody()->getContents(), true);
+        
+        logError('Mailchimp API error', [
+            'status' => $response->getStatusCode(),
+            'body' => $body
+        ]);
+
+        throw new Exception(
+            isset($body['detail']) ? $body['detail'] : 'Failed to add subscriber'
+        );
+    }
 
 } catch (Exception $e) {
     logError('Error occurred', [
@@ -112,8 +143,7 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'error' => $e->getMessage(),
-        'details' => 'Please try again or contact support if the problem persists.'
+        'error' => $e->getMessage()
     ]);
 }
 
