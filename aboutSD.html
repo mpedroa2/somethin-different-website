@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>About - Somethin' Different</title>
+    <meta name="description" content="Learn more about Somethin' Different - Where creativity meets technology to shape the future of products, communities, and software.">
+    <link rel="stylesheet" href="css/SDmicro.css">
+    <link rel="stylesheet" href="css/SDresponsive.css">
+    <link rel="icon" href="pics/SD LOGO.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body class="dark-theme">
+    <header>
+      <nav class="main-nav">
+        <div class="hamburger-menu">
+          <button class="menu-toggle" aria-label="Toggle menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+          </button>
+          <div class="menu-content">
+            <ul>
+              <li><a href="indexSD.html">HOME</a></li>
+              <li><a href="aboutSD.html">ABOUT</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="search-container">
+          <input type="search" placeholder="Search" aria-label="Search">
+        </div>
+      </nav>
+
+      <div class="logo-container">
+        <h1>
+          <span class="logo-top brand-highlight">Somethin'<span class="registered">&reg;</span></span> 
+          <span class="logo-bottom brand-highlight">DIFFERENT.</span>
+        </h1>
+      </div>
+    </header>
+
+    <main class="about-content">
+      <section class="sd-section">
+        <img src="pics/slides/SD & 13.png" 
+             alt="Somethin' Different" 
+             class="about-logo-img"
+             loading="eager">
+        <p>
+          <span class="blue-highlight">Somethin' Different</span> is a transformative force at the intersection of creativity, technology, and culture. We harness the power of diverse voices, innovative products, and the universal language of music to inspire and empower individuals and communities.
+        </p>
+      </section>
+
+      <section class="SD-TBD-gif">
+        <h2>Stay in touch.</h2>
+        <video 
+          class="loop-video" 
+          autoplay 
+          loop 
+          muted 
+          playsinline>
+          <source src="videos/ny sd.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </section>
+
+      <section class="music-profiles">
+        <h2>Listen With Us.</h2>
+        <div class="profiles-grid">
+          <!-- Apple Music Profile -->
+          <div class="profile-embed">
+            <iframe allow="autoplay *; encrypted-media *;" 
+              frameborder="0" 
+              height="450" 
+              style="width:100%;max-width:660px;overflow:hidden;background:transparent;" 
+              sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" 
+              src="https://embed.music.apple.com/us/playlist/mystery-box-playlist-011/pl.u-DdANrXot03VzDx8?theme=dark">
+            </iframe>
+            <a href="https://music.apple.com/profile/somthndiffrnt" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               class="profile-link">
+               View Full Apple Music Profile
+            </a>
+          </div>
+
+          <!-- Spotify Playlist -->
+          <div class="profile-embed">
+            <iframe style="border-radius:12px" 
+              src="https://open.spotify.com/embed/playlist/66qxHt4ZM6EZz6HDdo7tck?utm_source=generator&theme=0" 
+              width="100%" 
+              height="450" 
+              frameBorder="0" 
+              allowfullscreen="" 
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+              loading="lazy">
+            </iframe>
+            <a href="https://open.spotify.com/user/31mkh5buonx3xi73acsiptgrn2ae?si=nhdikgDPSlW1CA7gUkam6A" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               class="profile-link">
+               View Full Spotify Profile
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="playlist">
+        <h2>FOLLOW US!</h2>
+        <!-- Instagram Feed -->
+        <div class="instagram-embed">
+          <blockquote 
+            class="instagram-media" 
+            data-instgrm-permalink="https://www.instagram.com/somethindffrnt/"
+            data-instgrm-version="14"
+            data-instgrm-theme="dark"
+            style="
+              background:#121212; 
+              border:0; 
+              border-radius:12px; 
+              box-shadow:none;
+              margin: 2rem auto; 
+              max-width:540px; 
+              min-width:326px; 
+              padding:0; 
+              width:99.375%;">
+          </blockquote>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-icons">
+        <a href="https://music.apple.com/profile/somthndiffrnt" 
+           target="_blank" 
+           rel="noopener noreferrer" 
+           aria-label="Follow us on Apple Music">
+          <img src="pics/Apple Logo - SD.png" alt="Apple Music Logo" class="social-icon">
+        </a>      
+        <a href="https://www.instagram.com/somethindffrnt/" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           aria-label="Follow us on Instagram">
+          <img src="pics/IG Logo - SD.webp" alt="Instagram Logo" class="social-icon">
+        </a>
+        <a href="https://open.spotify.com/user/31mkh5buonx3xi73acsiptgrn2ae?si=nhdikgDPSlW1CA7gUkam6A" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           aria-label="Follow us on Spotify">
+          <img src="pics/Spotify Black Logo - SD.png" alt="Spotify Logo" class="social-icon">
+        </a>
+      </div>
+      <p class="footer-tagline">Creativity. Technology. Culture.</p>  
+      <p class="copyright">&copy; 2024 Somethin' Different.</p>
+    </footer>
+
+    <script>
+      // Add the hamburger menu JavaScript from indexSD.html
+      document.querySelector('.menu-toggle').addEventListener('click', function() {
+        const menuContent = document.querySelector('.menu-content');
+        menuContent.classList.toggle('active');
+        
+        const lines = this.querySelectorAll('.hamburger-line');
+        this.classList.toggle('active');
+        
+        if (this.classList.contains('active')) {
+          lines[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+          lines[1].style.opacity = '0';
+          lines[2].style.transform = 'rotate(-45deg) translate(7px, -7px)';
+        } else {
+          lines[0].style.transform = 'none';
+          lines[1].style.opacity = '1';
+          lines[2].style.transform = 'none';
+        }
+      });
+
+      document.addEventListener('click', function(event) {
+        const menu = document.querySelector('.hamburger-menu');
+        const menuContent = document.querySelector('.menu-content');
+        if (!menu.contains(event.target) && menuContent.classList.contains('active')) {
+          menuContent.classList.remove('active');
+          const menuToggle = document.querySelector('.menu-toggle');
+          menuToggle.classList.remove('active');
+          const lines = menuToggle.querySelectorAll('.hamburger-line');
+          lines[0].style.transform = 'none';
+          lines[1].style.opacity = '1';
+          lines[2].style.transform = 'none';
+        }
+      });
+    </script>
+
+    <!-- Add Instagram embed script before closing body tag -->
+    <script async src="//www.instagram.com/embed.js"></script>
+  </body>
+</html>
