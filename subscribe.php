@@ -23,8 +23,18 @@ function logError($message, $data = null) {
 try {
     // Set JSON headers
     header('Content-Type: application/json');
-    header('Access-Control-Allow-Origin: https://somethindifferent.co');
-    header('Access-Control-Allow-Origin: https://www.somethindifferent.co');
+
+    // Replace the multiple header calls with a single one using an array
+    $allowed_origins = [
+        'https://somethindifferent.co',
+        'https://www.somethindifferent.co',
+        'https://somethin-different-dd8aefc58ac8.herokuapp.com'
+    ];
+
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    if (in_array($origin, $allowed_origins)) {
+        header("Access-Control-Allow-Origin: $origin");
+    }
     header('Access-Control-Allow-Methods: POST, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type');
 
