@@ -13,9 +13,15 @@ ob_clean();
 
 // Set JSON headers
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Origin: https://somethin-different-dd8aefc58ac8.herokuapp.com');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
+
+// Add handling for OPTIONS request (preflight)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
 // Diagnostic logging function
 function logDebug($message, $data = null) {
