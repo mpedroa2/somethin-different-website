@@ -1,5 +1,5 @@
 <?php
-error_reporting(E_ALL & ~E_DEPRECATED);
+error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 require_once 'vendor/autoload.php';
@@ -8,6 +8,9 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
+
+// Add logging
+error_log('Received request: ' . print_r($_POST, true));
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
@@ -26,11 +29,11 @@ error_log('Received data: ' . print_r($data, true));
 try {
     $mailchimp = new \MailchimpMarketing\ApiClient();
     $mailchimp->setConfig([
-        'apiKey' => 'efd58f4ea088a58cff61b648d74a73cf-us8',
+        'apiKey' => getenv('MAILCHIMP_API_KEY'),
         'server' => 'us8'
     ]);
 
-    $list_id = '42cca877bc';
+    $list_id = getenv('MAILCHIMP_LIST_ID');
     $subscriber_hash = md5(strtolower($data['email']));
     
     try {
