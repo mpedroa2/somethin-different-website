@@ -1,7 +1,12 @@
 <?php
-// Move headers to top
+// Update CORS headers at the top
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');  // Temporarily allow all origins for testing
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+// Move security headers after CORS
 header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
-header('Content-Security-Policy: default-src https: \'self\'; img-src https: data: \'self\'; style-src https: \'self\' \'unsafe-inline\';');
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');
 
