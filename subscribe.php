@@ -23,7 +23,8 @@ function logError($message, $data = null) {
 try {
     // Set JSON headers
     header('Content-Type: application/json');
-    header('Access-Control-Allow-Origin: https://somethin-different-dd8aefc58ac8.herokuapp.com');
+    header('Access-Control-Allow-Origin: https://somethindifferent.co');
+    header('Access-Control-Allow-Origin: https://www.somethindifferent.co');
     header('Access-Control-Allow-Methods: POST, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type');
 
