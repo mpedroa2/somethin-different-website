@@ -165,51 +165,72 @@
       // Change slide every 3 seconds
       setInterval(nextSlide, 3000);
 
-      const API_URL = window.location.hostname.includes('somethindifferent.co') 
-          ? `${window.location.protocol}//${window.location.host}`
-          : 'https://somethin-different-dd8aefc58ac8.herokuapp.com';
+      // Update API URL logic to handle mobile better
+      const API_URL = (() => {
+          const hostname = window.location.hostname;
+          const protocol = window.location.protocol;
+          
+          // Debug logging
+          console.log('Current hostname:', hostname);
+          console.log('Current protocol:', protocol);
+          
+          if (hostname.includes('somethindifferent.co')) {
+              const url = `${protocol}//${hostname}`;
+              console.log('Using URL:', url);
+              return url;
+          }
+          
+          console.log('Using fallback URL');
+          return 'https://somethin-different-dd8aefc58ac8.herokuapp.com';
+      })();
 
-      console.log('API URL:', API_URL); // Add this for debugging
-
+      // Add form submission debugging
       document.getElementById('connect-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const submitButton = e.target.querySelector('button');
-        const formStatus = document.getElementById('formStatus');
-        const formData = new FormData(e.target);
-        
-        console.log('Submitting to:', `${API_URL}/subscribe.php`); // Debug URL
+          e.preventDefault();
+          
+          const submitButton = e.target.querySelector('button');
+          const formStatus = document.getElementById('formStatus');
+          const formData = new FormData(e.target);
+          
+          // Log form data
+          console.log('Form submission:', {
+              name: formData.get('name'),
+              email: formData.get('email'),
+              url: `${API_URL}/subscribe.php`
+          });
 
-        try {
-            const response = await fetch(`${API_URL}/subscribe.php`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: formData.get('name').trim(),
-                    email: formData.get('email').trim()
-                })
-            });
+          try {
+              const response = await fetch(`${API_URL}/subscribe.php`, {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'Accept': 'application/json'
+                  },
+                  body: JSON.stringify({
+                      name: formData.get('name').trim(),
+                      email: formData.get('email').trim()
+                  })
+              });
 
-            console.log('Response status:', response.status); // Debug response
+              console.log('Response status:', response.status);
+              console.log('Response headers:', [...response.headers.entries()]);
 
-            const data = await response.json();
-            console.log('Response data:', data); // Debug data
-            
-            if (data.success) {
-                formStatus.textContent = data.message;
-                formStatus.className = 'form-status success';
-                e.target.reset();
-            } else {
-                formStatus.textContent = data.error || 'Subscription failed. Please try again.';
-                formStatus.className = 'form-status error';
-            }
-        } catch (error) {
-            console.error('Full error:', error); // Detailed error
-            formStatus.textContent = 'Connection error. Please try again.';
-            formStatus.className = 'form-status error';
-        }
+              const data = await response.json();
+              console.log('Response data:', data);
+              
+              if (data.success) {
+                  formStatus.textContent = data.message;
+                  formStatus.className = 'form-status success';
+                  e.target.reset();
+              } else {
+                  formStatus.textContent = data.error || 'Subscription failed. Please try again.';
+                  formStatus.className = 'form-status error';
+              }
+          } catch (error) {
+              console.error('Full error:', error);
+              formStatus.textContent = 'Connection error. Please try again.';
+              formStatus.className = 'form-status error';
+          }
       });
 
       // Add touch support for slideshow
