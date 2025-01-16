@@ -174,26 +174,11 @@
       document.getElementById('connect-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        // Disable form while submitting
         const submitButton = e.target.querySelector('button');
-        const originalText = submitButton.textContent;
-        submitButton.disabled = true;
-        submitButton.textContent = 'Subscribing...';
-        
         const formStatus = document.getElementById('formStatus');
         const formData = new FormData(e.target);
         
-        // Reset status
-        formStatus.textContent = 'Processing...';
-        formStatus.className = 'form-status';
-        
-        // Validate email
-        const email = formData.get('email').trim();
-        if (!email || !email.includes('@')) {
-            formStatus.textContent = 'Please enter a valid email address';
-            formStatus.className = 'form-status error';
-            return;
-        }
+        console.log('Submitting to:', `${API_URL}/subscribe.php`); // Debug URL
 
         try {
             const response = await fetch(`${API_URL}/subscribe.php`, {
@@ -203,11 +188,14 @@
                 },
                 body: JSON.stringify({
                     name: formData.get('name').trim(),
-                    email: email
+                    email: formData.get('email').trim()
                 })
             });
 
+            console.log('Response status:', response.status); // Debug response
+
             const data = await response.json();
+            console.log('Response data:', data); // Debug data
             
             if (data.success) {
                 formStatus.textContent = data.message;
@@ -218,13 +206,9 @@
                 formStatus.className = 'form-status error';
             }
         } catch (error) {
-            console.error('Error details:', error);
+            console.error('Full error:', error); // Detailed error
             formStatus.textContent = 'Connection error. Please try again.';
             formStatus.className = 'form-status error';
-        } finally {
-            // Re-enable form
-            submitButton.disabled = false;
-            submitButton.textContent = originalText;
         }
       });
 
