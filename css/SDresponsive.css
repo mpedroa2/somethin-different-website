@@ -1,0 +1,120 @@
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    h1 {
+      font-size: 4em;
+    }
+  
+    nav {
+      text-align: center;
+    }
+  
+    nav ul {
+      padding: 0;
+    }
+  
+    nav li {
+      display: block;
+      margin: 10px 0;
+    }
+  
+    #slogan-preview div {
+      font-size: 0.2em;
+      margin: 0 10px;
+      text-align: center;
+    }
+  
+    .contact-inputs {
+      width: 90%;
+    }
+
+    .contact-container {
+      flex-direction: column;
+      align-items: center;
+      height: auto;
+      padding: 10px;
+    }
+  
+   .contact-left{
+      flex-direction: column;
+   }
+  
+    .contact-left button {
+      margin-top: 10px;
+      width: 100%;
+    }
+  }
+  
+
+
+
+
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 3em;
+    }
+
+    nav ul {
+      padding: 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    nav li {
+      margin: 5px;
+
+
+    }
+  
+    #slogan-preview div {
+      font-size: 1.2em;
+      margin: 5px;
+      text-align: center;
+    }
+  
+    .contact-container {
+      padding: 5px;
+    }
+  
+    .contact-inputs {
+      width: 100%;
+      font-size: 1em;
+    }
+  
+    .contact-left button {
+      
+      width: 100%;
+    }
+
+    footer {
+      font-size: .8em;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  }
+  
+
+  @media (max-width: 320px) {
+    h1 {
+      font-size: 2.5em; /* Make sure header fits on small screens */
+    }
+  
+    .contact-inputs {
+      font-size: 0.9em; /* Make sure inputs are still readable */
+    }
+  
+    .contact-left button {
+      padding: 10px 20px; /* Adjust button padding */
+    }
+  
+    #slogan-preview div {
+      font-size: 0.8em; /* Smaller font for slogans on small screens */
+    }
+  
+    footer {
+      font-size: 0.7em; /* Adjust footer text size */
+    }
+  }
+

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Somethin' Different</title>
+    <meta name="description" content="Somethin' Different - The sounds of an update to the human consciousness">
+    <link rel="stylesheet" href="css/SDmicro.css">
+    <link rel="stylesheet" href="css/SDresponsive.css">
+    <link rel="icon" href="pics/SD LOGO.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body class="dark-theme">
+    <header>
+      <nav class="main-nav">
+        <div class="hamburger-menu">
+          <button class="menu-toggle" aria-label="Toggle menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+          </button>
+          <div class="menu-content">
+            <ul>
+              <li><a href="indexSD.html">HOME</a></li>
+              <li><a href="aboutSD.html">ABOUT</a></li>
+            </ul>
+          </div>
+        </div>
+        <img src="pics/SD LOGO.png" alt="SD Logo" class="nav-logo">
+        <div class="search-container">
+          <input type="search" placeholder="Search" aria-label="Search">
+        </div>
+      </nav>
+
+      <div class="logo-container">
+        <h1>
+          <span class="logo-top brand-highlight">Somethin'<span class="registered">&reg;</span></span> 
+          <span class="logo-bottom brand-highlight">DIFFERENT.</span>
+        </h1>
+      </div>
+    </header>
+
+    <main>
+      <section class="welcome">
+        <h2>WELCOME</h2>
+        <div class="hero-text">
+          <h3>V 1.0 - AN UPDATE TO THE HUMAN<br>
+            <span class="highlight">CONSCIOUSNESS.</span>
+          </h3>
+        </div>
+      </section>
+
+      <section class="slideshow-container">
+        <div class="slideshow">
+          <img src="pics/slides/SD & 1.png" alt="SD & 1" class="slide">
+          <img src="pics/slides/SD & 2.png" alt="SD & 2" class="slide">
+          <img src="pics/slides/SD & 3.png" alt="SD & 3" class="slide">
+          <img src="pics/slides/SD & 4.png" alt="SD & 4" class="slide">
+          <img src="pics/slides/SD & 5.png" alt="SD & 5" class="slide">
+          <img src="pics/slides/SD & 6.png" alt="SD & 6" class="slide">
+          <img src="pics/slides/SD & 7.png" alt="SD & 7" class="slide">
+          <img src="pics/slides/SD & 8.png" alt="SD & 8" class="slide">
+          <img src="pics/slides/SD & 9.png" alt="SD & 9" class="slide">
+          <img src="pics/slides/SD & 10.png" alt="SD & 10" class="slide">
+          <img src="pics/slides/SD & 11.png" alt="SD & 11" class="slide">
+          <img src="pics/slides/SD & 12.png" alt="SD & 12" class="slide">
+          <img src="pics/slides/SD & 13.png" alt="SD & 13" class="slide">
+        </div>
+      </section>
+
+      <section class="stay-connected">
+        <h2>STAY CONNECTED</h2>
+        <p class="stay-connected-text">For early access to future <span class="brand-highlight">Somethin' Different</span> releases + more</p>
+        <form id="connect-form" class="connect-form">
+          <div class="form-group">
+            <input type="text" 
+                   name="name" 
+                   placeholder="Name" 
+                   required 
+                   aria-label="Name"
+                   class="connect-input">
+            <input type="email" 
+                   name="email" 
+                   placeholder="Email Address" 
+                   required 
+                   aria-label="Email Address"
+                   class="connect-input">
+          </div>
+          <button type="submit" class="connect-button">Subscribe</button>
+          <div id="formStatus" class="form-status" role="alert" aria-live="polite"></div>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-icons">
+        <a href="https://music.apple.com/profile/somthndiffrnt" 
+           target="_blank" 
+           rel="noopener noreferrer" 
+           aria-label="Apple Music Profile">
+          <img src="pics/Apple Logo - SD.png" alt="Apple Music Logo" class="social-icon">
+        </a>      
+        <a href="https://www.instagram.com/somethindffrnt/" target="_blank"><img src="pics/IG Logo - SD.webp" alt="instagram Logo" class= "social-icon"></a>
+        <a href="https://open.spotify.com/user/31mkh5buonx3xi73acsiptgrn2ae?si=nhdikgDPSlW1CA7gUkam6A" target="_blank"><img src="pics/Spotify Black Logo - SD.png" alt="Spotify Logo" class= "social-icon"></a>
+      </div>
+      <p class="footer-tagline">Creativity. Technology. Culture.</p>
+      <p class="copyright">&copy; 2024 Somethin' Different.</p>
+    </footer>
+
+    <script>
+      document.querySelector('.menu-toggle').addEventListener('click', function() {
+        const menuContent = document.querySelector('.menu-content');
+        menuContent.classList.toggle('active');
+        
+        // Toggle hamburger animation
+        const lines = this.querySelectorAll('.hamburger-line');
+        this.classList.toggle('active');
+        
+        if (this.classList.contains('active')) {
+          lines[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+          lines[1].style.opacity = '0';
+          lines[2].style.transform = 'rotate(-45deg) translate(7px, -7px)';
+        } else {
+          lines[0].style.transform = 'none';
+          lines[1].style.opacity = '1';
+          lines[2].style.transform = 'none';
+        }
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', function(event) {
+        const menu = document.querySelector('.hamburger-menu');
+        const menuContent = document.querySelector('.menu-content');
+        if (!menu.contains(event.target) && menuContent.classList.contains('active')) {
+          menuContent.classList.remove('active');
+          const menuToggle = document.querySelector('.menu-toggle');
+          menuToggle.classList.remove('active');
+          const lines = menuToggle.querySelectorAll('.hamburger-line');
+          lines[0].style.transform = 'none';
+          lines[1].style.opacity = '1';
+          lines[2].style.transform = 'none';
+        }
+      });
+
+      const slides = document.querySelectorAll('.slide');
+      let currentSlide = 0;
+
+      function showSlide(index) {
+        slides.forEach(slide => slide.classList.remove('active'));
+        slides[index].classList.add('active');
+      }
+
+      function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+      }
+
+      // Show first slide
+      showSlide(0);
+
+      // Change slide every 3 seconds
+      setInterval(nextSlide, 3000);
+
+      document.getElementById('connect-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formStatus = document.getElementById('formStatus');
+        const formData = new FormData(e.target);
+        
+        try {
+          console.log('Submitting form...');
+          const response = await fetch('/subscribe.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name: formData.get('name'),
+              email: formData.get('email')
+            })
+          });
+
+          const data = await response.json();
+          console.log('Response:', data);
+
+          if (response.ok) {
+            formStatus.textContent = data.message;
+            formStatus.className = 'form-status success';
+            e.target.reset();
+          } else {
+            throw new Error(data.error || 'Subscription failed');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          formStatus.textContent = 'Something went wrong. Please try again.';
+          formStatus.className = 'form-status error';
+        }
+      });
+    </script>
+  </body>
+</html>
