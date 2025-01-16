@@ -27,6 +27,7 @@ try {
     // Replace the multiple header calls with a single one using an array
     $allowed_origins = [
         'https://www.somethindifferent.co',
+        'http://www.somethindifferent.co',  // For initial SSL redirect
         'https://somethin-different-dd8aefc58ac8.herokuapp.com'
     ];
 
@@ -36,6 +37,15 @@ try {
     }
     header('Access-Control-Allow-Methods: POST, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type');
+
+    // Add these headers for better mobile support
+    header('Vary: User-Agent');
+    header('Cache-Control: no-cache');
+
+    // Add security headers for desktop browsers
+    header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+    header('X-Content-Type-Options: nosniff');
+    header('X-Frame-Options: SAMEORIGIN');
 
     // Handle preflight request
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {

@@ -247,8 +247,8 @@
           }
       }
 
-      // Add redirect for non-www
-      if (window.location.hostname === 'somethindifferent.co') {
+      // Update redirect logic to handle all cases
+      if (window.location.protocol !== 'https:' || window.location.hostname === 'somethindifferent.co') {
           window.location.href = 'https://www.somethindifferent.co' + window.location.pathname;
       }
     </script>
