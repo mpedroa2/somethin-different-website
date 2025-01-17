@@ -1,8 +1,9 @@
 <?php
-// Update CORS headers at the top
-header('Access-Control-Allow-Origin: *');  // Allow all origins temporarily
+// CORS headers first, before any output
+header('Access-Control-Allow-Origin: http://www.somethindifferent.co');  // Allow HTTP version
+header('Access-Control-Allow-Origin: https://www.somethindifferent.co'); // Allow HTTPS version
 header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Accept, Origin');
+header('Access-Control-Allow-Headers: Content-Type, Accept');
 header('Content-Type: application/json');
 
 // Move security headers after CORS
