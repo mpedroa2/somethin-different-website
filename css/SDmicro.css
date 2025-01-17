@@ -692,9 +692,34 @@ body.dark-theme nav.main-nav {
 }
 
 .form-status {
-  font-size: 0.9rem;
-  color: var(--text-color);
   margin-top: 1rem;
+  padding: 0.8rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.form-status.active {
+  opacity: 1;
+}
+
+.form-status.success {
+  background-color: rgba(39, 174, 96, 0.1);
+  color: #27ae60;
+  border: 1px solid #27ae60;
+}
+
+.form-status.error {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+}
+
+.form-status.info {
+  background-color: rgba(52, 152, 219, 0.1);
+  color: #3498db;
+  border: 1px solid #3498db;
 }
 
 .slideshow-container {

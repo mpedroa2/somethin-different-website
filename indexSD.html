@@ -188,17 +188,14 @@
       document.getElementById('connect-form').addEventListener('submit', async (e) => {
           e.preventDefault();
           
-          const submitButton = e.target.querySelector('button');
           const formStatus = document.getElementById('formStatus');
+          
+          // Show submitting status
+          formStatus.textContent = 'Submitting...';
+          formStatus.className = 'form-status info active';
+          
           const formData = new FormData(e.target);
           
-          // Log form data
-          console.log('Form submission:', {
-              name: formData.get('name'),
-              email: formData.get('email'),
-              url: `${API_URL}/subscribe.php`
-          });
-
           try {
               const response = await fetch(`${API_URL}/subscribe.php`, {
                   method: 'POST',
@@ -212,24 +209,19 @@
                   })
               });
 
-              console.log('Response status:', response.status);
-              console.log('Response headers:', [...response.headers.entries()]);
-
               const data = await response.json();
-              console.log('Response data:', data);
               
               if (data.success) {
-                  formStatus.textContent = data.message;
-                  formStatus.className = 'form-status success';
+                  formStatus.textContent = '✓ ' + data.message;
+                  formStatus.className = 'form-status success active';
                   e.target.reset();
               } else {
-                  formStatus.textContent = data.error || 'Subscription failed. Please try again.';
-                  formStatus.className = 'form-status error';
+                  formStatus.textContent = '✕ ' + (data.error || 'Subscription failed. Please try again.');
+                  formStatus.className = 'form-status error active';
               }
           } catch (error) {
-              console.error('Full error:', error);
-              formStatus.textContent = 'Connection error. Please try again.';
-              formStatus.className = 'form-status error';
+              formStatus.textContent = '✕ Unable to connect. Please try again.';
+              formStatus.className = 'form-status error active';
           }
       });
 
