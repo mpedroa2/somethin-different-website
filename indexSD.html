@@ -166,16 +166,7 @@
       setInterval(nextSlide, 3000);
 
       // Update API URL logic to handle all cases
-      const API_URL = (() => {
-          const hostname = window.location.hostname;
-          
-          // Always use HTTPS
-          if (hostname.includes('somethindifferent.co')) {
-              return 'https://somethin-different-dd8aefc58ac8.herokuapp.com';
-          }
-          
-          return 'https://somethin-different-dd8aefc58ac8.herokuapp.com';
-      })();
+      const API_URL = 'https://somethin-different-dd8aefc58ac8.herokuapp.com';
 
       // Add form submission debugging
       document.getElementById('connect-form').addEventListener('submit', async (e) => {
@@ -188,33 +179,40 @@
           formStatus.className = 'form-status info active';
           
           const formData = new FormData(e.target);
+          const data = {
+              name: formData.get('name').trim(),
+              email: formData.get('email').trim()
+          };
           
           try {
               const response = await fetch(`${API_URL}/subscribe.php`, {
                   method: 'POST',
                   headers: {
                       'Content-Type': 'application/json',
-                      'Accept': 'application/json'
+                      'Accept': 'application/json',
+                      'Origin': 'https://www.somethindifferent.co'
                   },
-                  body: JSON.stringify({
-                      name: formData.get('name').trim(),
-                      email: formData.get('email').trim()
-                  }),
-                  mode: 'cors'
+                  body: JSON.stringify(data),
+                  mode: 'cors',
+                  credentials: 'omit'
               });
 
-              const data = await response.json();
+              if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+              }
+
+              const result = await response.json();
               
-              if (data.success) {
-                  formStatus.textContent = '✓ ' + data.message;
+              if (result.success) {
+                  formStatus.textContent = '✓ ' + result.message;
                   formStatus.className = 'form-status success active';
                   e.target.reset();
               } else {
-                  formStatus.textContent = '✕ ' + (data.error || 'Subscription failed. Please try again.');
+                  formStatus.textContent = '✕ ' + (result.error || 'Subscription failed. Please try again.');
                   formStatus.className = 'form-status error active';
               }
           } catch (error) {
-              formStatus.textContent = '✕ Unable to connect. Please try again.';
+              formStatus.textContent = '✕ Unable to connect. Please check your internet connection and try again.';
               formStatus.className = 'form-status error active';
           }
       });
