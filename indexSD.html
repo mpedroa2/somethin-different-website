@@ -165,22 +165,15 @@
       // Change slide every 3 seconds
       setInterval(nextSlide, 3000);
 
-      // Update API URL logic to handle mobile better
+      // Update API URL logic to handle all cases
       const API_URL = (() => {
           const hostname = window.location.hostname;
-          const protocol = window.location.protocol;
           
-          // Debug logging
-          console.log('Current hostname:', hostname);
-          console.log('Current protocol:', protocol);
-          
+          // Always use HTTPS
           if (hostname.includes('somethindifferent.co')) {
-              const url = `${protocol}//${hostname}`;
-              console.log('Using URL:', url);
-              return url;
+              return 'https://somethin-different-dd8aefc58ac8.herokuapp.com';
           }
           
-          console.log('Using fallback URL');
           return 'https://somethin-different-dd8aefc58ac8.herokuapp.com';
       })();
 
@@ -206,7 +199,8 @@
                   body: JSON.stringify({
                       name: formData.get('name').trim(),
                       email: formData.get('email').trim()
-                  })
+                  }),
+                  mode: 'cors'
               });
 
               const data = await response.json();
