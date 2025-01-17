@@ -1,10 +1,26 @@
 <?php
-// CORS headers first, before any output
-header('Access-Control-Allow-Origin: http://www.somethindifferent.co');  // Allow HTTP version
-header('Access-Control-Allow-Origin: https://www.somethindifferent.co'); // Allow HTTPS version
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Accept');
+// Get the origin
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+$allowed_origins = [
+    'http://www.somethindifferent.co',
+    'https://www.somethindifferent.co',
+    'https://somethin-different-dd8aefc58ac8.herokuapp.com'
+];
+
+// Set CORS headers based on origin
+if (in_array($origin, $allowed_origins)) {
+    header("Access-Control-Allow-Origin: $origin");
+    header('Access-Control-Allow-Methods: POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type');
+}
+
 header('Content-Type: application/json');
+
+// Handle preflight request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
 // Move security headers after CORS
 header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
@@ -35,38 +51,6 @@ function logError($message, $data = null) {
 try {
     // Set JSON headers
     header('Content-Type: application/json');
-
-    // Replace the multiple header calls with a single one using an array
-    $allowed_origins = [
-        'https://www.somethindifferent.co',
-        'http://www.somethindifferent.co',  // For initial SSL redirect
-        'https://somethin-different-dd8aefc58ac8.herokuapp.com'
-    ];
-
-    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-    if (in_array($origin, $allowed_origins)) {
-        header("Access-Control-Allow-Origin: $origin");
-    }
-    header('Access-Control-Allow-Methods: POST, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type');
-
-    // Add these headers for better mobile support
-    header('Vary: User-Agent');
-    header('Cache-Control: no-cache');
-
-    // Force HTTPS
-    if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {
-        $redirect = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        header('HTTP/1.1 301 Moved Permanently');
-        header('Location: ' . $redirect);
-        exit();
-    }
-
-    // Handle preflight request
-    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-        http_response_code(200);
-        exit();
-    }
 
     // Log request
     logError('Received request', [
