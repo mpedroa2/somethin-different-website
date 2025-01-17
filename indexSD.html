@@ -185,15 +185,18 @@
           const formData = new FormData(e.target);
           
           try {
-              const response = await fetch(`${API_URL}/subscribe.php`, {
+              // Always use Heroku URL for API calls
+              const response = await fetch('https://somethin-different-dd8aefc58ac8.herokuapp.com/subscribe.php', {
                   method: 'POST',
                   headers: {
-                      'Content-Type': 'application/json'
+                      'Content-Type': 'application/json',
+                      'Accept': 'application/json'
                   },
                   body: JSON.stringify({
                       name: formData.get('name').trim(),
                       email: formData.get('email').trim()
-                  })
+                  }),
+                  mode: 'cors'  // Add CORS mode
               });
 
               const result = await response.json();
