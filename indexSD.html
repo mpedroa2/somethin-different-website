@@ -13,6 +13,12 @@
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- Force HTTPS -->
+    <script>
+        if (window.location.protocol !== 'https:') {
+            window.location.replace('https://' + window.location.host + window.location.pathname);
+        }
+    </script>
   </head>
   <body class="dark-theme">
     <header>
@@ -173,33 +179,22 @@
           e.preventDefault();
           
           const formStatus = document.getElementById('formStatus');
-          
-          // Show submitting status
           formStatus.textContent = 'Submitting...';
           formStatus.className = 'form-status info active';
           
           const formData = new FormData(e.target);
-          const data = {
-              name: formData.get('name').trim(),
-              email: formData.get('email').trim()
-          };
           
           try {
               const response = await fetch(`${API_URL}/subscribe.php`, {
                   method: 'POST',
                   headers: {
-                      'Content-Type': 'application/json',
-                      'Accept': 'application/json',
-                      'Origin': 'https://www.somethindifferent.co'
+                      'Content-Type': 'application/json'
                   },
-                  body: JSON.stringify(data),
-                  mode: 'cors',
-                  credentials: 'omit'
+                  body: JSON.stringify({
+                      name: formData.get('name').trim(),
+                      email: formData.get('email').trim()
+                  })
               });
-
-              if (!response.ok) {
-                  throw new Error(`HTTP error! status: ${response.status}`);
-              }
 
               const result = await response.json();
               
@@ -212,7 +207,7 @@
                   formStatus.className = 'form-status error active';
               }
           } catch (error) {
-              formStatus.textContent = '✕ Unable to connect. Please check your internet connection and try again.';
+              formStatus.textContent = '✕ Unable to connect. Please try again.';
               formStatus.className = 'form-status error active';
           }
       });

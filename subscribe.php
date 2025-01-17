@@ -1,9 +1,9 @@
 <?php
 // Update CORS headers at the top
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');  // Temporarily allow all origins for testing
+header('Access-Control-Allow-Origin: *');  // Allow all origins temporarily
 header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, Accept, Origin');
+header('Content-Type: application/json');
 
 // Move security headers after CORS
 header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
@@ -55,8 +55,9 @@ try {
 
     // Force HTTPS
     if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {
+        $redirect = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         header('HTTP/1.1 301 Moved Permanently');
-        header('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+        header('Location: ' . $redirect);
         exit();
     }
 
