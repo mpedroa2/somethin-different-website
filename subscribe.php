@@ -16,3 +16,9 @@ try {
     header('Location: ' . $redirect . '?status=error&message=' . urlencode($e->getMessage()));
     exit();
 } 
+
+$allowed_origins = [
+    'https://www.somethindifferent.co',
+    'https://somethindifferent.co',
+    'https://somethin-different-dd8aefc58ac8.herokuapp.com'
+]; 
