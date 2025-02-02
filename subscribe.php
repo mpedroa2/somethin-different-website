@@ -38,8 +38,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         echo json_encode(['success' => true, 'message' => 'Thanks for subscribing! Welcome to Somethin\' Different.']);
     } catch (Exception $e) {
+        error_log('Mailchimp Error: ' . $e->getMessage());
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        echo json_encode([
+            'success' => false, 
+            'error' => 'Subscription failed. Please try again.',
+            'debug' => $e->getMessage()
+        ]);
     }
 } 
 

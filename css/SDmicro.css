@@ -1,30 +1,34 @@
 /* General Styles */
 @font-face {
   font-family: 'Bachelor';
-  src: url('../Fonts/bachelor-font/BachelorRegular.ttf') format('truetype');
+  src: url('https://somethin-different-dd8aefc58ac8.herokuapp.com/Fonts/bachelor-font/BachelorRegular.ttf') format('truetype');
   font-style: normal;
   font-weight: 400;
+  font-display: swap;
 }
 
 @font-face {
   font-family: 'Neue Haas Grotesk Display Pro';
-  src: url('../Fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayBlack.ttf') format('truetype');
+  src: url('https://somethin-different-dd8aefc58ac8.herokuapp.com/Fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayBlack.ttf') format('truetype');
   font-weight: 900;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
   font-family: 'Neue Haas Grotesk Display Pro';
-  src: url('../Fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayBold.ttf') format('truetype');
+  src: url('https://somethin-different-dd8aefc58ac8.herokuapp.com/Fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayBold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
   font-family: 'Neue Haas Grotesk Display Pro';
-  src: url('../Fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayRoman.ttf') format('truetype');
+  src: url('https://somethin-different-dd8aefc58ac8.herokuapp.com/Fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayRoman.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 body {
