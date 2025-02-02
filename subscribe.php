@@ -20,7 +20,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $input['email'] ?? '';
 
     try {
-        // Your Mailchimp code here...
+        // Initialize Mailchimp
+        $mailchimp = new \MailchimpMarketing\ApiClient();
+        $mailchimp->setConfig([
+            'apiKey' => getenv('MAILCHIMP_API_KEY'),
+            'server' => 'us8'  // Your server prefix from the API key
+        ]);
+
+        // Add subscriber to list
+        $response = $mailchimp->lists->addListMember(getenv('MAILCHIMP_LIST_ID'), [
+            'email_address' => $email,
+            'status' => 'subscribed',
+            'merge_fields' => [
+                'FNAME' => $name
+            ]
+        ]);
         
         echo json_encode(['success' => true, 'message' => 'Thanks for subscribing! Welcome to Somethin\' Different.']);
     } catch (Exception $e) {
