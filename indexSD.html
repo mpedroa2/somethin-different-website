@@ -11,6 +11,7 @@
     <link rel="icon" href="https://www.somethindifferent.co/pics/SD LOGO.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!-- Force HTTPS -->
@@ -207,8 +208,13 @@
                   body: JSON.stringify({
                       name: formData.get('name').trim(),
                       email: formData.get('email').trim()
-                  })
+                  }),
+                  credentials: 'omit'
               });
+
+              if (!response.ok) {
+                  throw new Error('Network response was not ok');
+              }
 
               const result = await response.json();
               
@@ -223,6 +229,7 @@
           } catch (error) {
               formStatus.textContent = '✕ Unable to connect. Please try again.';
               formStatus.className = 'form-status error active';
+              console.error('Error:', error);
           }
       });
     </script>
