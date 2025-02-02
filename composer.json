@@ -1,8 +1,7 @@
 {
     "require": {
         "php": "^8.0",
-        "mailchimp/marketing": "^3.0",
-        "apache2-utils": "*"
+        "mailchimp/marketing": "^3.0"
     },
     "config": {
         "allow-plugins": {
@@ -10,4 +9,4 @@
         },
         "process-timeout": 0
     }
-} 
+}
